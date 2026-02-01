@@ -1,0 +1,127 @@
+<div class="tasks-wrapper">
+
+  <!-- Header with Logout -->
+  <div class="page-header">
+    <h2 class="page-title">My Tasks</h2>
+
+    <button
+      type="button"
+      class="logout-btn"
+      (click)="logout()"
+    >
+      Logout
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="!isLoaded" class="status-text">
+    Loading tasks...
+  </div>
+
+  <!-- No tasks -->
+  <div *ngIf="isLoaded && tasks.length === 0" class="status-text">
+    No tasks found
+  </div>
+
+  <!-- Task list -->
+  <div *ngIf="isLoaded && tasks.length > 0" class="task-list">
+    <div class="task-card" *ngFor="let task of tasks">
+
+      <div class="task-header">
+        <h3>{{ task.title }}</h3>
+
+        <span
+          class="status"
+          [ngClass]="{
+            'pending': task.status === 'Pending',
+            'in-progress': task.status === 'In Progress',
+            'completed': task.status === 'Completed'
+          }"
+        >
+          {{ task.status }}
+        </span>
+      </div>
+
+      <p class="description">
+        {{ task.description || 'No description provided.' }}
+      </p>
+
+      <div class="task-meta">
+        <span>Due: {{ task.due_date }}</span>
+      </div>
+
+      <div class="task-actions">
+        <button
+          type="button"
+          class="edit-btn"
+          (click)="editTask(task)"
+        >
+          Edit
+        </button>
+
+        <button
+          type="button"
+          class="delete-btn"
+          (click)="deleteTask(task.id)"
+        >
+          Delete
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div class="form-card">
+    <h3>{{ isEditing ? 'Update Task' : 'Create Task' }}</h3>
+
+    <input
+      type="text"
+      [(ngModel)]="newTask.title"
+      placeholder="Task title"
+    />
+
+    <textarea
+      [(ngModel)]="newTask.description"
+      placeholder="Task description"
+    ></textarea>
+
+    <select [(ngModel)]="newTask.status">
+      <option value="" disabled hidden>Select status</option>
+      <option value="Pending">Pending</option>
+      <option value="In Progress">In Progress</option>
+      <option value="Completed">Completed</option>
+    </select>
+
+    <label>Due Date</label>
+    <input
+      type="date"
+      [(ngModel)]="newTask.due_date"
+    />
+
+    <div class="form-actions">
+      <button
+        type="button"
+        class="primary-btn"
+        (click)="createTask()"
+        [disabled]="
+          !newTask.title.trim() ||
+          !newTask.status ||
+          !newTask.due_date
+        "
+      >
+        {{ isEditing ? 'Update Task' : 'Add Task' }}
+      </button>
+
+      <button
+        type="button"
+        *ngIf="isEditing"
+        class="secondary-btn"
+        (click)="resetForm()"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+
+</div>
